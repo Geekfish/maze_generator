@@ -20,8 +20,11 @@ and open a one cell-wide hole at a random point in each of the three.
 
 Continue in this manner recursively, until every chamber has a width of one cell in either of the two directions.
 """
+from itertools import cycle
 from pprint import pprint
 from random import randint, seed
+
+import requests
 
 # new_seed = randint(1, 100)
 # print("Seed was:", new_seed)
@@ -45,11 +48,27 @@ def main():
     ]
     pprint(chamber)
 
-    chamber = divide(chamber, chamber_tree, direction=VERTICAL)
+    direction_gen = cycle([HORIZONTAL, VERTICAL])
+
+    chamber = divide(chamber, chamber_tree, direction_gen)
     pprint(chamber)
 
+    chamber = divide(chamber, chamber_tree, direction_gen)
+    pprint(chamber)
 
-def divide(chamber, chamber_tree, direction):
+    # my_list = iter([1,2,3,4,5])
+    # print(next(my_list))
+    # print(next(my_list))
+    # print(next(my_list))
+    # print(next(my_list))
+    # print(next(my_list))
+    # print(next(my_list))
+    # print(next(my_list))
+
+
+def divide(chamber, chamber_tree, direction_gen):
+    direction = next(direction_gen)
+
     if direction == HORIZONTAL:
         line_index = randint(0, len(chamber) - 1)
         line_length = len(chamber[line_index])
