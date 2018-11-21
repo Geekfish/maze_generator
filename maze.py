@@ -21,15 +21,23 @@ and open a one cell-wide hole at a random point in each of the three.
 Continue in this manner recursively, until every chamber has a width of one cell in either of the two directions.
 """
 from pprint import pprint
-from random import randint
+from random import randint, seed
+
+# new_seed = randint(1, 100)
+# print("Seed was:", new_seed)
+seed(86)
 
 WALL = "*"
 NO_WALL = " "
+
+HORIZONTAL = 1
+VERTICAL = 2
 
 MIN_WIDTH = 2
 
 
 def main():
+    chamber_tree = []
     chamber = [
         [
             NO_WALL for _x in range(10)
@@ -37,20 +45,42 @@ def main():
     ]
     pprint(chamber)
 
-    chamber = divide(chamber)
+    chamber = divide(chamber, chamber_tree, direction=VERTICAL)
     pprint(chamber)
 
 
-def divide(chamber):
-    x = randint(0, len(chamber))
-    line = chamber[x]
+def divide(chamber, chamber_tree, direction):
+    if direction == HORIZONTAL:
+        line_index = randint(0, len(chamber) - 1)
+        line_length = len(chamber[line_index])
+    else:
+        line_index = randint(0, len(chamber[0]) - 1)
+        line_length = len(chamber[0])
 
-    open_passage = randint(0, len(line))
+    open_passage = randint(0, line_length - 1)
+
+    print(line_index, line_length)
 
     def get_wall_char(cell_index):
+        print(open_passage, cell_index)
         return NO_WALL if cell_index == open_passage else WALL
 
-    chamber[x] = list(map(get_wall_char, range(len(line))))
+    if direction == HORIZONTAL:
+        chamber[line_index] = list(map(get_wall_char, range(line_length)))
+    else:
+        new_chamber = []
+        for row_index, row in enumerate(chamber):
+            new_row = []
+            for cell_index, cell in enumerate(row):
+                new_cell = " "
+                if cell_index == line_index:
+                    new_cell = get_wall_char(row_index)
+                new_row.append(new_cell)
+            new_chamber.append(new_row)
+        chamber = new_chamber
+
+
+    # sub_chamber = chamber[:x-1]
 
     return chamber
 
